@@ -56,16 +56,65 @@ cd postcode-distance
            spring.jpa.show-sql=true
            spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 
+# Running with Docker
+1. Build the Docker Image
+   Build your Spring Boot application JAR file:
+
+         mvn clean package
+         
+         Build the Docker image:
+         docker build -t postcode-distance .
+   2. Run the Docker Container
+      Run the Docker container using the following command:
+
+            docker run -p 8080:8080 postcode-distance
+            Your Spring Boot application will now be running inside a Docker container, and you can access it at: http://localhost:8080
+      3. Docker Compose (Optional)
+         If you want to run both your application and PostgreSQL in Docker, you can use Docker Compose.
+               Create a docker-compose.yml file in the root of your project:
+      
+                  version: '3.8'
+                  services:
+                  postgres:
+                  image: postgres:13
+                  environment:
+                  POSTGRES_DB: postcode_db
+                  POSTGRES_USER: your_username
+                  POSTGRES_PASSWORD: your_password
+                  ports:
+                           - "5432:5432"
+                           volumes:
+                           - postgres-data:/var/lib/postgresql/data
+                  app:
+                  image: postcode-distance
+                  build: .
+                  ports:
+                  - "8080:8080"
+                  environment:
+                  SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postcode_db
+                  SPRING_DATASOURCE_USERNAME: your_username
+                  SPRING_DATASOURCE_PASSWORD: your_password
+                  depends_on:
+                    - postgres
+                  
+                  volumes:
+                  postgres-data:
+
+Build and run the Docker Compose setup:
+
+         docker-compose up --build
+         Access your application and Swagger UI at:
+
+
 4. Build the Project
    Run the following command to build the project:
+                     
+         mvn clean install
+   5. Run the Application
+      Start the Spring Boot application:
 
-mvn clean install
-5. Run the Application
-   Start the Spring Boot application:
-
-
-mvn spring-boot:run
-The application will start on http://localhost:8080.
+            mvn spring-boot:run
+      The application will start on http://localhost:8080.
 
 ### API Documentation
 Calculate Distance
@@ -122,10 +171,22 @@ Copy
 * Lombok (optional)
 * JUnit
 
+### Contributing
+Fork the repository.
+
+#### Create a new branch:
+
+git checkout -b feature/your-feature-name
+Commit your changes:
+
+git commit -m "Add your feature"
+Push to the branch:
+
+git push origin feature/your-feature-name
+Open a pull request.
+
 ### Contact
 For questions or feedback, please contact:
 
 Name : Mehar Chaitanya
 Email: meharchaitanya@gmail.com
-
-
